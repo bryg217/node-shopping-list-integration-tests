@@ -183,4 +183,40 @@ describe('Recipe List', function() {
         res.body.should.deep.equal(Object.assign(newRecipe, {id: res.body.id}));
       });
   });
+
+  it('should update items on PUT', function() {
+    const updateData = {
+      name: 'Black Beans',
+      ingredients: ['Just Beans =)']
+    };
+
+    return chai.request(app)
+      .get('/recipes')
+      .then(function(res) {
+        updateData.id = res.body[0].id;
+        return chai.request(app)
+          .put(`/recipes/${updateData.id}`)
+          .send(updateData);
+      })
+      // prove that the PUT request has right status code
+      // and returns updated item
+      .then(function(res) {
+        res.should.have.status(200);
+        res.should.be.json;
+        res.body.should.be.a('object');
+        res.body.should.deep.equal(updateData);
+      });
+  });
+
+  it('should delete a recipe', function() {
+    return chai.request(app)
+      .get('/recipes')
+      .then(function(res) {
+        return chai.request(app)
+          .delete(`/recipes/${res.body[0].id}`);
+      })
+      .then(function(res) {
+        res.should.have.status(204);
+      });
+  });
 });
