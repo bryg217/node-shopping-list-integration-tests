@@ -168,4 +168,19 @@ describe('Recipe List', function() {
         }); 
       });
   });
+
+  it('should post a new recpe', function() {
+    const newRecipe = {name: "Black Beans", ingredients: ["BEANS", "SAUCE"]};
+    return chai.request(app)
+      .post('/recipes')
+      .send(newRecipe)
+      .then(function(res) {
+        res.should.have.status(201);
+        res.should.be.json;
+        res.should.be.a('object');
+        res.body.should.include.keys('id', 'name', 'ingredients');
+        res.body.id.should.not.be.null;
+        res.body.should.deep.equal(Object.assign(newRecipe, {id: res.body.id}));
+      });
+  });
 });
